@@ -52,23 +52,48 @@ export default function LoginPage() {
     return isValid;
   };
 
+  // const handleLogin = async () => {
+  //   if (!validateFields()) return;
+
+  //   try {
+  //     const response = await api.post("/token", {
+  //       username,
+  //       password,
+  //     });
+
+  //     localStorage.setItem("token", response.data.access_token);
+  //     toast.success("Login Successful!");
+  //     navigate("/chatbot");
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error(error.response?.data?.detail || "Invalid credentials");
+  //   }
+  // };
+
   const handleLogin = async () => {
-    if (!validateFields()) return;
+  if (!validateFields()) return;
 
-    try {
-      const response = await api.post("/login", {
-        username,
-        password,
-      });
+  try {
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
 
-      localStorage.setItem("token", response.data.access_token);
-      toast.success("Login Successful!");
-      navigate("/chatbot");
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.detail || "Invalid credentials");
-    }
-  };
+    const response = await api.post("/token", formData, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    localStorage.setItem("token", response.data.access_token);
+    toast.success("Login Successful!");
+    navigate("/chatbot");
+  } catch (error) {
+    console.error(error);
+    toast.error(
+      error.response?.data?.detail || "Invalid credentials"
+    );
+  }
+};
 
   const cardBg = isDark ? colors.dark.card : colors.light.background;
   const textColor = isDark ? colors.dark.text : colors.light.text;
