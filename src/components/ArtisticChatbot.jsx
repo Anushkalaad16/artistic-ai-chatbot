@@ -231,6 +231,8 @@ import colors from '../color';
 import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import ReactMarkdown from "react-markdown";
+
 
 export default function ArtisticChatbot() {
   const navigate = useNavigate();
@@ -239,7 +241,7 @@ export default function ArtisticChatbot() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hello! I'm your Smart Assistant. How can I brighten your day today?",
+      text: "Hello! I'm your Smart Assistant. What Can I do for you?",
       isBot: true,
       time: '12:16 PM'
     }
@@ -271,10 +273,20 @@ export default function ArtisticChatbot() {
     try {
       // Call /api/chat endpoint
       const response = await api.post('/api/chat', {
-        query,
-        top_k: 5,
-        threshold: 0.2
-      });
+        query: `
+        Answer in clean Markdown format.
+        Rules:
+        - Use headings
+        - Use bullet points
+        - Use line breaks
+        - Do NOT write a single paragraph
+
+        Question:
+        ${query}
+        `,
+          top_k: 5,
+          threshold: 0.2
+        });
 
       const botMessage = {
         id: messages.length + 2,
@@ -377,7 +389,29 @@ export default function ArtisticChatbot() {
                     boxShadow: message.isBot ? '0 10px 40px rgba(0, 0, 0, 0.08)' : '0 10px 40px rgba(0, 0, 0, 0.2)'
                   }}
                 >
-                  <p className="text-base leading-relaxed">{message.text}</p>
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => (
+                        <p className="text-base leading-relaxed mb-2">{children}</p>
+                      ),
+                      ul: ({ children }) => (
+                        <ul className="list-disc pl-6 space-y-1">{children}</ul>
+                      ),
+                      ol: ({ children }) => (
+                        <ol className="list-decimal pl-6 space-y-1">{children}</ol>
+                      ),
+                      li: ({ children }) => <li>{children}</li>,
+                      strong: ({ children }) => (
+                        <strong className="font-semibold">{children}</strong>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 className="text-lg font-bold mb-2">{children}</h3>
+                      )
+                    }}
+                  >
+                    {message.text}
+                  </ReactMarkdown>
+
                 </div>
               </div>
             </div>
