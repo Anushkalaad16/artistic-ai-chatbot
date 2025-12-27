@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Sun, Moon, ArrowLeft } from "lucide-react";
+import { Sun, Moon, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import colors from "../color";
 import api from "../api/axios";
@@ -14,6 +13,8 @@ export default function LoginPage() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,41 +72,47 @@ export default function LoginPage() {
   // };
 
   const handleLogin = async () => {
-  if (!validateFields()) return;
+    if (!validateFields()) return;
 
-  try {
-    const formData = new URLSearchParams();
-    formData.append("username", username);
-    formData.append("password", password);
+    try {
+      const formData = new URLSearchParams();
+      formData.append("username", username);
+      formData.append("password", password);
 
-    const response = await api.post("/token", formData, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
+      const response = await api.post("/token", formData, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
 
-    localStorage.setItem("token", response.data.access_token);
-    toast.success("Login Successful!");
-    navigate("/chatbot");
-  } catch (error) {
-    console.error(error);
-    toast.error(
-      error.response?.data?.detail || "Invalid credentials"
-    );
-  }
-};
+      localStorage.setItem("token", response.data.access_token);
+      toast.success("Login Successful!");
+      navigate("/chatbot");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.detail || "Invalid credentials");
+    }
+  };
 
   const cardBg = isDark ? colors.dark.card : colors.light.background;
   const textColor = isDark ? colors.dark.text : colors.light.text;
-  const textSecondary = isDark ? colors.dark.textSecondary : colors.light.textSecondary;
+  const textSecondary = isDark
+    ? colors.dark.textSecondary
+    : colors.light.textSecondary;
   const borderColor = isDark ? colors.dark.border : colors.light.border;
 
   return (
     <div
       className={`min-h-screen flex items-center justify-center p-6 transition-all duration-700 ${
-        isEntering ? "opacity-0 scale-90" : isNavigating ? "opacity-0 scale-90" : "opacity-100 scale-100"
+        isEntering
+          ? "opacity-0 scale-90"
+          : isNavigating
+          ? "opacity-0 scale-90"
+          : "opacity-100 scale-100"
       }`}
-      style={{ backgroundColor: isDark ? colors.dark.background : colors.white }}
+      style={{
+        backgroundColor: isDark ? colors.dark.background : colors.white,
+      }}
     >
       {/* Theme Toggle */}
       <button
@@ -122,15 +129,25 @@ export default function LoginPage() {
       >
         <div className="relative">
           {isDark ? (
-            <Sun className="w-7 h-7 transition-all duration-500 animate-pulse" style={{ color: colors.orange }} />
+            <Sun
+              className="w-7 h-7 transition-all duration-500 animate-pulse"
+              style={{ color: colors.orange }}
+            />
           ) : (
-            <Moon className="w-7 h-7 transition-all duration-500" style={{ color: colors.orange }} />
+            <Moon
+              className="w-7 h-7 transition-all duration-500"
+              style={{ color: colors.orange }}
+            />
           )}
         </div>
       </button>
 
       {/* Main Container */}
-      <div className={`w-full max-w-4xl relative transition-all duration-700 ${!isPageLoaded ? "blur-md" : "blur-0"}`}>
+      <div
+        className={`w-full max-w-4xl relative transition-all duration-700 ${
+          !isPageLoaded ? "blur-md" : "blur-0"
+        }`}
+      >
         {/* Left Section */}
         <div className="relative z-20 w-1/2">
           <div
@@ -148,21 +165,41 @@ export default function LoginPage() {
               className="group flex items-center gap-2 mb-8 transition-all duration-300 hover:-translate-x-2 relative overflow-hidden disabled:opacity-50"
               style={{ color: textSecondary }}
             >
-              <span className="absolute bottom-0 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-300" style={{ backgroundColor: colors.orange }} />
-              <ArrowLeft size={22} className="transition-all duration-300 group-hover:scale-110 group-hover:-translate-x-1" style={{ color: colors.orange }} />
-              <span className="text-sm font-bold uppercase tracking-widest group-hover:tracking-[0.25em] transition-all duration-300">Back</span>
+              <span
+                className="absolute bottom-0 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-300"
+                style={{ backgroundColor: colors.orange }}
+              />
+              <ArrowLeft
+                size={22}
+                className="transition-all duration-300 group-hover:scale-110 group-hover:-translate-x-1"
+                style={{ color: colors.orange }}
+              />
+              <span className="text-sm font-bold uppercase tracking-widest group-hover:tracking-[0.25em] transition-all duration-300">
+                Back
+              </span>
             </button>
 
             {/* Welcome Text */}
             <div className="flex items-center gap-3 mb-10">
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: isDark ? colors.darkGray.background : colors.white }}
+                style={{
+                  backgroundColor: isDark
+                    ? colors.darkGray.background
+                    : colors.white,
+                }}
               >
-                <img src="/chaticon.png" alt="Artistic AI Logo" className="w-10 h-10 object-contain transition-all duration-300" />
+                <img
+                  src="/chaticon.png"
+                  alt="Artistic AI Logo"
+                  className="w-10 h-10 object-contain transition-all duration-300"
+                />
               </div>
               <div>
-                <h1 className="text-4xl font-black" style={{ color: textColor }}>
+                <h1
+                  className="text-4xl font-black"
+                  style={{ color: textColor }}
+                >
                   Welcome Back
                 </h1>
               </div>
@@ -172,7 +209,10 @@ export default function LoginPage() {
             <div className="space-y-6">
               {/* Username */}
               <div>
-                <label className="block text-xs uppercase tracking-wider mb-2" style={{ color: textSecondary }}>
+                <label
+                  className="block text-xs uppercase tracking-wider mb-2"
+                  style={{ color: textSecondary }}
+                >
                   Username <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -181,31 +221,64 @@ export default function LoginPage() {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter username"
                   className="w-full px-4 py-3 rounded-lg outline-none transition-all duration-200"
-                  style={{ backgroundColor: "#FFFFFF", color: textColor, border: `1px solid ${borderColor}` }}
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    color: textColor,
+                    border: `1px solid ${borderColor}`,
+                  }}
                 />
-                {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+                {errors.username && (
+                  <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+                )}
               </div>
 
               {/* Password */}
+              {/* Password */}
               <div>
-                <label className="block text-xs uppercase tracking-wider mb-2" style={{ color: textSecondary }}>
+                <label
+                  className="block text-xs uppercase tracking-wider mb-2"
+                  style={{ color: textSecondary }}
+                >
                   Password <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-lg outline-none transition-all duration-200"
-                  style={{ backgroundColor: "#FFFFFF", color: textColor, border: `1px solid ${borderColor}` }}
-                />
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 pr-12 rounded-lg outline-none transition-all duration-200"
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      color: textColor,
+                      border: `1px solid ${borderColor}`,
+                    }}
+                  />
+
+                  {/* Eye icon */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-200 hover:scale-110"
+                    style={{ color: textSecondary }}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
               </div>
 
               <button
                 onClick={handleLogin}
                 className="w-full py-4 rounded-full font-bold text-white text-lg shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
-                style={{ backgroundColor: colors.orange, boxShadow: `0 10px 30px ${colors.light.shadow}` }}
+                style={{
+                  backgroundColor: colors.orange,
+                  boxShadow: `0 10px 30px ${colors.light.shadow}`,
+                }}
               >
                 <span className="relative z-10">Login</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
@@ -214,7 +287,11 @@ export default function LoginPage() {
 
             <p className="text-center mt-6" style={{ color: textSecondary }}>
               Don't have a link?{" "}
-              <button onClick={() => navigate("/signup")} className="font-semibold hover:underline" style={{ color: colors.orange }}>
+              <button
+                onClick={() => navigate("/signup")}
+                className="font-semibold hover:underline"
+                style={{ color: colors.orange }}
+              >
                 Create one
               </button>
             </p>
@@ -224,7 +301,12 @@ export default function LoginPage() {
 
       {/* Right Section */}
       <div className="absolute right-0 top-0 w-1/2 h-full z-10">
-        <div className="h-full flex items-center justify-center p-12 rounded-r-3xl transition-all duration-700" style={{ backgroundColor: isDark ? colors.dark.background : colors.white }}>
+        <div
+          className="h-full flex items-center justify-center p-12 rounded-r-3xl transition-all duration-700"
+          style={{
+            backgroundColor: isDark ? colors.dark.background : colors.white,
+          }}
+        >
           <div className="relative w-full max-w-md">
             <video
               autoPlay
@@ -232,9 +314,16 @@ export default function LoginPage() {
               muted
               playsInline
               className="w-full rounded-full h-auto blur-sm transition-all duration-100"
-              style={{ boxShadow: `0 20px 40px rgba(0, 0, 0, 0.1)`, border: `2px solid ${colors.light.border}`, animation: "pulseBlur 3s infinite ease-in-out" }}
+              style={{
+                boxShadow: `0 20px 40px rgba(0, 0, 0, 0.1)`,
+                border: `2px solid ${colors.light.border}`,
+                animation: "pulseBlur 3s infinite ease-in-out",
+              }}
             >
-              <source src="/ai-animation-Picsart-BackgroundRemover.mp4" type="video/mp4" />
+              <source
+                src="/ai-animation-Picsart-BackgroundRemover.mp4"
+                type="video/mp4"
+              />
               Your browser does not support the video tag.
             </video>
           </div>
@@ -243,7 +332,8 @@ export default function LoginPage() {
 
       <style jsx>{`
         @keyframes pulseBlur {
-          0%, 100% {
+          0%,
+          100% {
             filter: blur(4px);
           }
           50% {
