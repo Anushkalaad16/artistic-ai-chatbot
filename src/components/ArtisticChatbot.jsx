@@ -353,6 +353,7 @@ export default function ArtisticChatbot() {
             src="/chaticon.png"
             alt="Artistic AI Logo"
             className="w-14 h-14 object-contain transition-all duration-300"
+            onClick={()=>{navigate("/home")}}
           />
           <h1 className="text-3xl font-black" style={{ color: theme.text }}>
             Artistic AI
