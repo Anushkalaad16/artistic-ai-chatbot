@@ -250,7 +250,14 @@ export default function ArtisticChatbot() {
   const messagesEndRef = useRef(null);
   const theme = isDark ? colors.dark : colors.light;
   const user = JSON.parse(localStorage.getItem("user"));
-  const username = user?.username || "User";
+  
+  // const username = user?.username || "User";
+  const username =
+  user.username ||
+  user.name ||
+  user.email?.split("@")[0] ||
+  "User";
+  console.log(username);
   const userInitial = username.charAt(0).toUpperCase();
 
   useEffect(() => {
